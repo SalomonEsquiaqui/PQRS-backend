@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PQRS CUL - Inicio de Sesión</title>
+    <link rel="stylesheet" href="../css/login.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+</head>
+<body>
+
+    <div class="login-wrapper">
+
+
+
+        <!-- PANEL IZQUIERDO -->
+        <div class="left-panel">
+            <div class="left-inner">
+                <div class="brand-badge">PQRS · CUL | VERSION BETA</div>
+                <h1>Corporación<br>Universitaria<br>Latinoamericana</h1>
+                <p>Tu voz importa. Gestiona tus peticiones, quejas, reclamos y sugerencias de forma rápida, segura y transparente.</p>
+                <div class="stats-row">
+                    <div class="stat-box">
+                        <span class="stat-num">98%</span>
+                        <span class="stat-lbl">Resueltas</span>
+                    </div>
+                    <div class="stat-box">
+                        <span class="stat-num">48h</span>
+                        <span class="stat-lbl">Respuesta</span>
+                    </div>
+                    <div class="stat-box">
+                        <span class="stat-num">24/7</span>
+                        <span class="stat-lbl">Disponible</span>
+                    </div>
+                </div>
+                <div class="left-icons">
+                    <i class="fas fa-comments"></i>
+                    <i class="fas fa-headset"></i>
+                    <i class="fas fa-shield-alt"></i>
+                    <i class="fas fa-users"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- PANEL DERECHO -->
+        <div class="right-panel">
+            <div class="form-card">
+                <div class="form-logo">
+                    <span class="logo-dot"></span>
+                    <span>SISTEMA PQRS · CUL</span>
+                </div>
+
+                <!-- TABS LOGIN / REGISTRO -->
+                <div class="auth-tabs">
+                    <button class="auth-tab active" id="tabLogin" onclick="switchTab('login')">Iniciar sesión</button>
+                    <button class="auth-tab" id="tabRegister" onclick="switchTab('register')">Registrarse</button>
+                </div>
+
+                <!-- SELECTOR DE ROL -->
+                <div class="field-group">
+                    <label class="field-label"><i class="fas fa-user-circle"></i> Rol</label>
+                    <div class="select-wrapper">
+                        <select id="roleSelect" onchange="onRoleChange()">
+                            <option value="">Selecciona tu rol</option>
+                            <option value="student">Estudiante</option>
+                            <option value="teacher">Docente</option>
+                            <option value="support">Soporte técnico</option>
+                            <option value="admin">Administrador</option>
+                        </select>
+                        <i class="fas fa-chevron-down select-arrow"></i>
+                    </div>
+                    <div class="role-badges" id="roleBadges"></div>
+                </div>
+
+                <!-- FORMULARIO LOGIN -->
+                <form id="loginForm" class="auth-form" autocomplete="off" onsubmit="return false;">
+
+                    <!-- TIPO DE IDENTIFICACION (solo registro) -->
+                    <div class="field-group hidden" id="registerFields">
+                        <label class="field-label"><i class="fas fa-id-card"></i> Tipo de identificación</label>
+                        <div class="select-wrapper">
+                            <select id="idType">
+                                <option value="">Selecciona tipo</option>
+                                <option value="cc">Cédula de ciudadanía</option>
+                                <option value="ti">Tarjeta de identidad</option>
+                                <option value="ce">Cédula de extranjería</option>
+                                <option value="pp">Pasaporte</option>
+                                <option value="pep">Permiso especial de permanencia</option>
+                            </select>
+                            <i class="fas fa-chevron-down select-arrow"></i>
+                        </div>
+                    </div>
+
+                    <div class="field-group hidden" id="idNumberField">
+                        <label class="field-label"><i class="fas fa-hashtag"></i> Número de identificación</label>
+                        <input type="text" id="idNumber" placeholder="Ej: 1234567890">
+                    </div>
+
+                    <div class="field-group hidden" id="nameField">
+                        <label class="field-label"><i class="fas fa-user"></i> Nombre completo</label>
+                        <input type="text" id="fullName" placeholder="Tu nombre completo">
+                    </div>
+
+                    <div class="field-group">
+                        <label class="field-label"><i class="fas fa-envelope"></i> Correo institucional</label>
+                        <input type="email" id="email" placeholder="usuario@est.cul.edu.co" required>
+                        <span class="field-hint" id="emailHint"></span>
+                    </div>
+
+                    <div class="field-group">
+                        <label class="field-label"><i class="fas fa-lock"></i> Contraseña</label>
+                        <div class="pass-wrapper">
+                            <input type="password" id="password" placeholder="Tu contraseña" required>
+                            <button type="button" class="show-pass" onclick="togglePassword()">
+                                <i class="fas fa-eye" id="eyeIcon"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                  <div class="field-group hidden" id="confirmPassField">
+                        <label class="field-label"><i class="fas fa-lock"></i> Confirmar contraseña</label>
+                        <div class="pass-wrapper">
+                            <input type="password" id="confirmPassword" placeholder="Repite tu contraseña">
+                        </div>
+                    </div>
+
+                    <!-- ✅ NUEVO: PIN de autorización -->
+                    <div class="field-group hidden" id="pinGroup">
+                        <label class="field-label">
+                            <i class="fas fa-lock"></i> PIN de autorización
+                        </label>
+                        <input
+                            type="password"
+                            id="rolePin"
+                            placeholder="PIN de 4 dígitos"
+                            maxlength="4"
+                            inputmode="numeric"
+                            pattern="[0-9]{4}"
+                        >
+                        <small style="color:#aaa;font-size:12px;margin-top:5px;display:block">
+                            <i class="fas fa-info-circle"></i>
+                            PIN proporcionado por el administrador del sistema
+                        </small>
+                    </div>
+
+                    <!-- ✅ CAPTCHA -->
+                    <div style="display:flex; justify-content:center; margin-bottom:16px;">
+                        <div class="g-recaptcha" 
+                             data-sitekey="6Le6ZvEsAAAAAFYgQhwT19VuZuPbPEuZDJVLzHrL">
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn-submit" id="submitBtn">
+                        <i class="fas fa-sign-in-alt"></i>
+                        <span id="submitText">Ingresar al sistema</span>
+                    </button>
+
+                </form>
+
+                <div id="message" class="form-message"></div>
+
+                <div class="role-pills">
+                    <span class="pill pill-est"><i class="fas fa-graduation-cap"></i> Estudiante</span>
+                    <span class="pill pill-doc"><i class="fas fa-chalkboard-teacher"></i> Docente</span>
+                    <span class="pill pill-sop"><i class="fas fa-tools"></i> Soporte</span>
+                    <span class="pill pill-adm"><i class="fas fa-user-cog"></i> Admin</span>
+                    
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="../js/login.js"></script>
+</body>
+</html>

@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel Soporte Técnico - PQRS CUL</title>
+    <link rel="stylesheet" href="../css/support.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body>
+
+    <!-- NAVBAR -->
+    <nav class="navbar">
+        <div class="nav-brand">
+            <i class="fas fa-tools"></i>
+            <span>PQRS <b>Soporte</b></span>
+        </div>
+        <button class="nav-toggle" onclick="toggleMenu()" aria-label="Menú">
+            <i class="fas fa-bars"></i>
+        </button>
+        <ul class="nav-links" id="navLinks">
+            <li><a href="#tickets-section"><i class="fas fa-ticket-alt"></i> Tickets</a></li>
+            <li><a href="#form-section"><i class="fas fa-plus-circle"></i> Nuevo ticket</a></li>
+            <li><a href="#history-section"><i class="fas fa-history"></i> Mi historial</a></li>
+            <li><a href="#" onclick="cerrarSesion()" class="nav-logout">
+    <i class="fas fa-sign-out-alt"></i> Cerrar sesión
+</a></li>
+        </ul>
+    </nav>
+
+    <!-- HERO -->
+    <section class="hero">
+        <div class="hero-inner">
+            <div class="hero-text">
+                <span class="hero-badge">
+                    <i class="fas fa-tools"></i>
+                    Soporte Técnico · CUL
+                </span>
+                <h1>Centro de soporte<br>y atención técnica</h1>
+                <p>
+                    Gestiona los tickets técnicos del sistema PQRS.
+                    Atiende, prioriza y resuelve las solicitudes
+                    de sistemas e infraestructura tecnológica.
+                </p>
+                <div class="hero-stats">
+                    <div class="hstat">
+                        <i class="fas fa-ticket-alt"></i>
+                        <span>Tickets en tiempo real</span>
+                    </div>
+                    <div class="hstat">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <span>Prioridad urgente</span>
+                    </div>
+                    <div class="hstat">
+                        <i class="fas fa-project-diagram"></i>
+                        <span>Escalamiento</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Métricas del hero -->
+            <div class="hero-metrics">
+                <div class="hmetric hm-total">
+                    <i class="fas fa-inbox"></i>
+                    <span class="hm-num" id="hmTotal">0</span>
+                    <span class="hm-label">Total tickets</span>
+                </div>
+                <div class="hmetric hm-urgent">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <span class="hm-num" id="hmUrgent">0</span>
+                    <span class="hm-label">Urgentes</span>
+                </div>
+                <div class="hmetric hm-process">
+                    <i class="fas fa-spinner"></i>
+                    <span class="hm-num" id="hmProcess">0</span>
+                    <span class="hm-label">En proceso</span>
+                </div>
+                <div class="hmetric hm-closed">
+                    <i class="fas fa-check-circle"></i>
+                    <span class="hm-num" id="hmClosed">0</span>
+                    <span class="hm-label">Cerrados</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- MAIN -->
+    <main class="main-content">
+
+        <!-- TICKETS TÉCNICOS -->
+        <section class="card" id="tickets-section">
+            <div class="card-header">
+                <h2><i class="fas fa-ticket-alt"></i> Tickets técnicos asignados</h2>
+                <div class="header-actions">
+                    <span class="card-badge urgent" id="urgentCount">0 urgentes</span>
+                    <span class="card-badge" id="ticketCount">Cargando...</span>
+                    <button class="btn-icon" onclick="cargarTickets()" title="Actualizar">
+                        <i class="fas fa-sync-alt"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- FILTROS Y BÚSQUEDA -->
+            <div class="toolbar">
+                <div class="filter-bar">
+                    <button class="filter-btn active" onclick="filtrarTickets('all', this)">
+                        <i class="fas fa-list"></i> Todos
+                    </button>
+                    <button class="filter-btn btn-urgent" onclick="filtrarTickets('urgent', this)">
+                        <i class="fas fa-exclamation-triangle"></i> Urgentes
+                    </button>
+                    <button class="filter-btn" onclick="filtrarTickets(1, this)">
+                        <span class="status-dot pending"></span> Pendientes
+                    </button>
+                    <button class="filter-btn" onclick="filtrarTickets(2, this)">
+                        <span class="status-dot process"></span> En proceso
+                    </button>
+                    <button class="filter-btn" onclick="filtrarTickets(3, this)">
+                        <span class="status-dot resolved"></span> Cerrados
+                    </button>
+                </div>
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="searchInput" placeholder="Buscar ticket..." oninput="buscarTickets()">
+                </div>
+            </div>
+
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Ticket</th>
+                            <th>Título</th>
+                            <th>Categoría</th>
+                            <th>Prioridad</th>
+                            <th>Estado</th>
+                            <th>Fecha</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="ticketsTable"></tbody>
+                </table>
+                <div id="ticketsEmpty" class="empty-state hidden">
+                    <i class="fas fa-check-circle" style="color:#A5D6A7"></i>
+                    <p>No hay tickets en esta categoría</p>
+                    <small>¡Buen trabajo! Todo está al día.</small>
+                </div>
+            </div>
+        </section>
+
+        <!-- FORMULARIO: NUEVO TICKET -->
+        <section class="card form-card" id="form-section">
+            <div class="card-header">
+                <h2><i class="fas fa-plus-circle"></i> Registrar nuevo ticket</h2>
+                <span class="card-badge">Reporte técnico</span>
+            </div>
+
+            <form id="ticketForm">
+
+                <div class="form-row">
+                    <div class="field-group">
+                        <label><i class="fas fa-layer-group"></i> Categoría técnica</label>
+                        <select id="category_id" required>
+                            <option value="">Selecciona categoría</option>
+                            <option value="3">💻 Sistemas / Software</option>
+                            <option value="8">🌐 Conectividad / Red</option>
+                            <option value="9">🖥️ Hardware / Equipos</option>
+                            <option value="10">🔐 Seguridad / Accesos</option>
+                            <option value="11">📧 Correo institucional</option>
+                            <option value="4">🏛️ Infraestructura</option>
+                            <option value="5">📋 Otro</option>
+                        </select>
+                    </div>
+                    <div class="field-group">
+                        <label><i class="fas fa-fire"></i> Nivel de prioridad</label>
+                        <select id="priority" required>
+                            <option value="">Selecciona prioridad</option>
+                            <option value="low">🟢 Baja — no interrumpe operaciones</option>
+                            <option value="medium">🟡 Media — afecta parcialmente</option>
+                            <option value="high">🟠 Alta — limita el trabajo</option>
+                            <option value="urgent">🔴 Urgente — detiene operaciones</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="field-group">
+                        <label><i class="fas fa-desktop"></i> Sistema / Equipo afectado</label>
+                        <input type="text" id="affected_system" placeholder="Ej: Plataforma Moodle, PC Lab 3, Red WiFi..." required>
+                    </div>
+                    <div class="field-group">
+                        <label><i class="fas fa-calendar-alt"></i> Fecha y hora del incidente</label>
+                        <input type="datetime-local" id="event_time" required>
+                    </div>
+                </div>
+
+                <div class="field-group">
+                    <label><i class="fas fa-heading"></i> Título del ticket</label>
+                    <input type="text" id="title" placeholder="Describe brevemente el problema técnico" required maxlength="100">
+                </div>
+
+                <div class="field-group">
+                    <label><i class="fas fa-align-left"></i> Descripción detallada del problema</label>
+                    <textarea id="description" placeholder="Describe el error exacto, pasos para reproducirlo, usuarios afectados, mensajes de error, comportamiento esperado vs actual..." required></textarea>
+                </div>
+
+                <!-- IMPACTO -->
+                <div class="field-group">
+                    <label><i class="fas fa-users"></i> Usuarios afectados</label>
+                    <select id="impact_scope">
+                        <option value="">Selecciona impacto</option>
+                        <option value="individual">Solo yo (1 usuario)</option>
+                        <option value="area">Mi área / departamento</option>
+                        <option value="faculty">Una facultad entera</option>
+                        <option value="all">Toda la institución</option>
+                    </select>
+                </div>
+
+                <div class="field-group">
+                    <label><i class="fas fa-paperclip"></i> Adjuntar capturas / logs <span class="optional">(opcional)</span></label>
+                    <div class="file-drop" id="fileDrop" onclick="document.getElementById('fileInput').click()">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                        <span>Capturas de pantalla, logs, archivos de error</span>
+                        <small>PNG, JPG, PDF, TXT, LOG · Máx. 5MB por archivo</small>
+                    </div>
+                    <input type="file" id="fileInput" multiple
+                        accept=".pdf,.jpg,.jpeg,.png,.txt,.log,.doc,.docx"
+                        style="display:none"
+                        onchange="showFiles(this)">
+                    <div id="fileList" class="file-list"></div>
+                </div>
+
+                <button type="submit" class="btn-primary">
+                    <i class="fas fa-paper-plane"></i>
+                    Registrar ticket técnico
+                </button>
+
+            </form>
+        </section>
+
+        <!-- HISTORIAL PROPIO -->
+        <section class="card" id="history-section">
+            <div class="card-header">
+                <h2><i class="fas fa-history"></i> Mi historial de tickets</h2>
+                <div class="header-actions">
+                    <span class="card-badge" id="historyCount">0 registros</span>
+                    <button class="btn-icon" onclick="cargarHistorial()" title="Actualizar">
+                        <i class="fas fa-sync-alt"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Ticket</th>
+                            <th>Título</th>
+                            <th>Prioridad</th>
+                            <th>Estado</th>
+                            <th>Fecha</th>
+                            <th>Respuesta</th>
+                        </tr>
+                    </thead>
+                    <tbody id="historyTable"></tbody>
+                </table>
+                <div id="historyEmpty" class="empty-state hidden">
+                    <i class="fas fa-folder-open"></i>
+                    <p>Aún no has registrado tickets</p>
+                    <small>Usa el formulario de arriba para reportar un problema técnico</small>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="footer">
+        <p><i class="fas fa-university"></i> Corporación Universitaria Latinoamericana · Soporte Técnico 2025</p>
+    </footer>
+
+    <script src="../js/support.js"></script>
+</body>
+</html>

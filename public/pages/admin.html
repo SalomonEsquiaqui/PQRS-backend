@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Administrador PQRS - CUL</title>
+    <link rel="stylesheet" href="../css/admin.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body>
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="sidebar-logo">
+                <i class="fas fa-shield-alt"></i>
+                <div>
+                    <span class="sidebar-title">PQRS Admin</span>
+                    <span class="sidebar-sub">CUL · 2025</span>
+                </div>
+            </div>
+            <button class="sidebar-close" onclick="toggleSidebar()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+
+        <nav class="sidebar-nav">
+            <span class="nav-section">Gestión</span>
+            <ul>
+                <li>
+                    <a href="#" class="nav-item active" onclick="filterByStatus('all', this)">
+                        <i class="fas fa-list-ul"></i>
+                        <span>Todas las solicitudes</span>
+                        <span class="nav-count" id="countAll">0</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" class="nav-item" onclick="filterByStatus(1, this)">
+                        <i class="fas fa-clock"></i>
+                        <span>Pendientes</span>
+                        <span class="nav-count pending" id="countPending">0</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" class="nav-item" onclick="filterByStatus(2, this)">
+                        <i class="fas fa-spinner"></i>
+                        <span>En proceso</span>
+                        <span class="nav-count process" id="countProcess">0</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" class="nav-item" onclick="filterByStatus(3, this)">
+                        <i class="fas fa-check-circle"></i>
+                        <span>Resueltas</span>
+                        <span class="nav-count resolved" id="countResolved">0</span>
+                    </a>
+                </li>
+            </ul>
+
+            <span class="nav-section">Sistema</span>
+            <ul>
+                <li>
+                    <a href="#" class="nav-item">
+                        <i class="fas fa-users"></i>
+                        <span>Usuarios</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" class="nav-item">
+                        <i class="fas fa-chart-bar"></i>
+                        <span>Reportes</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" class="nav-item">
+                        <i class="fas fa-cog"></i>
+                        <span>Configuración</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+        <div class="sidebar-footer">
+            <a href="#" onclick="cerrarSesion()" class="nav-logout">
+    <i class="fas fa-sign-out-alt"></i> Cerrar sesión
+</a>
+        </div>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="main-content">
+
+        <!-- TOPBAR -->
+        <header class="topbar">
+            <div class="topbar-left">
+                <button class="menu-toggle" onclick="toggleSidebar()">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div>
+                    <h1>Gestión de PQRS</h1>
+                    <p>Corporación Universitaria Latinoamericana</p>
+                </div>
+            </div>
+            <div class="topbar-right">
+                <div class="admin-avatar">
+                    <i class="fas fa-user-shield"></i>
+                    <span>Administrador</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- MÉTRICAS -->
+        <div class="metrics-row">
+            <div class="metric-card">
+                <div class="metric-icon all"><i class="fas fa-inbox"></i></div>
+                <div class="metric-info">
+                    <span class="metric-num" id="metricAll">0</span>
+                    <span class="metric-label">Total solicitudes</span>
+                </div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-icon pending"><i class="fas fa-clock"></i></div>
+                <div class="metric-info">
+                    <span class="metric-num" id="metricPending">0</span>
+                    <span class="metric-label">Pendientes</span>
+                </div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-icon process"><i class="fas fa-spinner"></i></div>
+                <div class="metric-info">
+                    <span class="metric-num" id="metricProcess">0</span>
+                    <span class="metric-label">En proceso</span>
+                </div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-icon resolved"><i class="fas fa-check-circle"></i></div>
+                <div class="metric-info">
+                    <span class="metric-num" id="metricResolved">0</span>
+                    <span class="metric-label">Resueltas</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- TABLA -->
+        <div class="table-card">
+            <div class="table-header">
+                <div>
+                    <h2>Solicitudes <span id="tableTitle">— Todas</span></h2>
+                    <p id="tableSubtitle">Mostrando todos los registros</p>
+                </div>
+                <div class="table-actions">
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="searchInput" placeholder="Buscar por título..." oninput="buscarSolicitudes()">
+                    </div>
+                    <button class="btn-refresh" onclick="cargarSolicitudes()">
+                        <i class="fas fa-sync-alt"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Título</th>
+                            <th>Descripción</th>
+                            <th>Estado</th>
+                            <th>Cambiar estado</th>
+                            <th>Responder</th>
+                        </tr>
+                    </thead>
+                    <tbody id="requestsTable"></tbody>
+                </table>
+                <div id="adminEmpty" class="empty-state hidden">
+                    <i class="fas fa-inbox"></i>
+                    <p>No hay solicitudes en esta categoría</p>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <script src="../js/admin.js"></script>
+</body>
+</html>

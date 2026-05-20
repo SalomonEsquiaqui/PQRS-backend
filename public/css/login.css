@@ -1,0 +1,456 @@
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Segoe UI', sans-serif;
+}
+
+body{
+    min-height:100vh;
+    background:#f0f4fb;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    padding:20px;
+}
+
+.login-wrapper{
+    width:100%;
+    max-width:1100px;
+    display:flex;
+    border-radius:24px;
+    overflow:hidden;
+    box-shadow:0 20px 60px rgba(0,57,145,0.15);
+    min-height:600px;
+}
+
+/* === PANEL IZQUIERDO === */
+.left-panel{
+    width:45%;
+    background:linear-gradient(145deg,#0057D9,#0041a8);
+    padding:50px 40px;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    color:white;
+    position:relative;
+    overflow:hidden;
+}
+
+.left-panel::before{
+    content:'';
+    position:absolute;
+    top:-80px;
+    right:-80px;
+    width:300px;
+    height:300px;
+    border-radius:50%;
+    background:rgba(255,255,255,0.05);
+}
+
+.left-panel::after{
+    content:'';
+    position:absolute;
+    bottom:-60px;
+    left:-60px;
+    width:200px;
+    height:200px;
+    border-radius:50%;
+    background:rgba(255,140,66,0.12);
+}
+
+.left-inner{
+    position:relative;
+    z-index:2;
+}
+
+.brand-badge{
+    display:inline-block;
+    background:rgba(255,255,255,0.15);
+    border:1px solid rgba(255,255,255,0.25);
+    border-radius:20px;
+    padding:6px 16px;
+    font-size:11px;
+    letter-spacing:1.5px;
+    text-transform:uppercase;
+    margin-bottom:24px;
+    color:rgba(255,255,255,0.9);
+}
+
+.left-inner h1{
+    font-size:34px;
+    font-weight:700;
+    line-height:1.25;
+    margin-bottom:18px;
+}
+
+.left-inner p{
+    font-size:15px;
+    line-height:1.8;
+    opacity:0.85;
+    margin-bottom:36px;
+}
+
+.stats-row{
+    display:flex;
+    gap:12px;
+    margin-bottom:36px;
+}
+
+.stat-box{
+    flex:1;
+    background:rgba(255,255,255,0.12);
+    border:1px solid rgba(255,255,255,0.2);
+    border-radius:14px;
+    padding:14px 12px;
+    text-align:center;
+    transition:0.3s;
+}
+
+.stat-box:hover{
+    background:rgba(255,255,255,0.2);
+    transform:translateY(-2px);
+}
+
+.stat-num{
+    display:block;
+    font-size:22px;
+    font-weight:700;
+    color:#FF8C42;
+}
+
+.stat-lbl{
+    display:block;
+    font-size:11px;
+    opacity:0.75;
+    margin-top:3px;
+}
+
+.left-icons{
+    display:flex;
+    gap:18px;
+    font-size:26px;
+    color:rgba(255,255,255,0.4);
+}
+
+.left-icons i{
+    transition:0.3s;
+    cursor:default;
+}
+
+.left-icons i:hover{
+    color:#FF8C42;
+    transform:scale(1.2);
+}
+
+/* === PANEL DERECHO === */
+.right-panel{
+    width:55%;
+    background:white;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    padding:40px;
+}
+
+.form-card{
+    width:100%;
+    max-width:420px;
+}
+
+.form-logo{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    margin-bottom:28px;
+}
+
+.logo-dot{
+    width:10px;
+    height:10px;
+    background:#FF8C42;
+    border-radius:50%;
+    flex-shrink:0;
+}
+
+.form-logo span{
+    font-size:12px;
+    font-weight:700;
+    color:#0057D9;
+    letter-spacing:1px;
+    text-transform:uppercase;
+}
+
+/* TABS */
+.auth-tabs{
+    display:flex;
+    gap:4px;
+    background:#f0f4fb;
+    border-radius:12px;
+    padding:4px;
+    margin-bottom:24px;
+}
+
+.auth-tab{
+    flex:1;
+    padding:10px;
+    border:none;
+    border-radius:10px;
+    font-size:14px;
+    cursor:pointer;
+    background:transparent;
+    color:#666;
+    transition:0.3s;
+    font-family:'Segoe UI', sans-serif;
+    font-weight:500;
+}
+
+.auth-tab.active{
+    background:white;
+    color:#0057D9;
+    box-shadow:0 2px 8px rgba(0,87,217,0.12);
+}
+
+/* CAMPOS */
+.field-group{
+    margin-bottom:16px;
+}
+
+.field-label{
+    display:block;
+    font-size:13px;
+    font-weight:600;
+    color:#444;
+    margin-bottom:7px;
+}
+
+.field-label i{
+    color:#0057D9;
+    margin-right:6px;
+    font-size:13px;
+}
+
+.field-group input,
+.select-wrapper select{
+    width:100%;
+    padding:12px 15px;
+    border:1.5px solid #e0e5ef;
+    border-radius:12px;
+    font-size:14px;
+    color:#333;
+    background:#f9fafc;
+    transition:0.3s;
+    font-family:'Segoe UI', sans-serif;
+}
+
+.field-group input:focus,
+.select-wrapper select:focus{
+    outline:none;
+    border-color:#0057D9;
+    background:white;
+    box-shadow:0 0 0 4px rgba(0,87,217,0.08);
+}
+
+.field-hint{
+    display:block;
+    font-size:11px;
+    color:#999;
+    margin-top:5px;
+    min-height:16px;
+    transition:0.3s;
+}
+
+/* SELECT */
+.select-wrapper{
+    position:relative;
+}
+
+.select-wrapper select{
+    appearance:none;
+    padding-right:36px;
+    cursor:pointer;
+}
+
+.select-arrow{
+    position:absolute;
+    right:13px;
+    top:50%;
+    transform:translateY(-50%);
+    color:#0057D9;
+    font-size:12px;
+    pointer-events:none;
+}
+
+/* BADGES DE ROL */
+.role-badges{
+    margin-top:8px;
+    min-height:24px;
+}
+
+.role-badge-info{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    font-size:12px;
+    padding:5px 12px;
+    border-radius:20px;
+    font-weight:600;
+    animation:fadeIn 0.3s ease;
+}
+
+.badge-student{ background:#E6F1FB; color:#0057D9; }
+.badge-teacher{ background:#EAF3DE; color:#3B6D11; }
+.badge-support{ background:#FAEEDA; color:#854F0B; }
+.badge-admin{   background:#FAECE7; color:#993C1D; }
+
+/* CONTRASEÑA */
+.pass-wrapper{
+    position:relative;
+}
+
+.pass-wrapper input{
+    padding-right:46px;
+}
+
+.show-pass{
+    position:absolute;
+    right:13px;
+    top:50%;
+    transform:translateY(-50%);
+    background:none;
+    border:none;
+    cursor:pointer;
+    color:#aaa;
+    font-size:14px;
+    padding:0;
+    transition:0.2s;
+}
+
+.show-pass:hover{
+    color:#0057D9;
+}
+
+/* BOTÓN PRINCIPAL */
+.btn-submit{
+    width:100%;
+    padding:14px;
+    border:none;
+    border-radius:12px;
+    background:#0057D9;
+    color:white;
+    font-size:15px;
+    font-weight:600;
+    cursor:pointer;
+    transition:0.3s;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:10px;
+    font-family:'Segoe UI', sans-serif;
+    margin-top:4px;
+}
+
+.btn-submit:hover{
+    background:#003b91;
+    transform:translateY(-2px);
+    box-shadow:0 8px 20px rgba(0,87,217,0.3);
+}
+
+.btn-submit:active{
+    transform:translateY(0);
+}
+
+/* MENSAJE */
+.form-message{
+    margin-top:14px;
+    text-align:center;
+    font-size:13px;
+    font-weight:600;
+    min-height:20px;
+    animation:fadeIn 0.3s ease;
+    border-radius:8px;
+    padding:8px 0;
+}
+
+.form-message.success{
+    background:#EAF3DE;
+    color:#3B6D11;
+}
+
+.form-message.error{
+    background:#FCEBEB;
+    color:#A32D2D;
+}
+
+/* PILLS DECORATIVAS */
+.role-pills{
+    display:flex;
+    gap:6px;
+    flex-wrap:wrap;
+    justify-content:center;
+    margin-top:20px;
+}
+
+.pill{
+    display:inline-flex;
+    align-items:center;
+    gap:5px;
+    font-size:11px;
+    padding:5px 11px;
+    border-radius:20px;
+    font-weight:600;
+}
+
+.pill-est{ background:#E6F1FB; color:#0057D9; }
+.pill-doc{ background:#EAF3DE; color:#3B6D11; }
+.pill-sop{ background:#FAEEDA; color:#854F0B; }
+.pill-adm{ background:#FAECE7; color:#993C1D; }
+
+/* HIDDEN */
+.hidden{
+    display:none;
+}
+
+/* ANIMACIONES */
+@keyframes fadeIn{
+    from{ opacity:0; transform:translateY(-6px); }
+    to{ opacity:1; transform:translateY(0); }
+}
+
+/* === RESPONSIVE === */
+@media(max-width:800px){
+    body{ padding:0; align-items:stretch; }
+
+    .login-wrapper{
+        flex-direction:column;
+        border-radius:0;
+        min-height:100vh;
+        box-shadow:none;
+    }
+
+    .left-panel{
+        width:100%;
+        padding:40px 30px;
+    }
+
+    .left-inner h1{ font-size:26px; }
+
+    .right-panel{
+        width:100%;
+        padding:30px 24px;
+    }
+}
+
+@media(max-width:420px){
+    .stats-row{ flex-direction:column; }
+    .role-pills{ gap:5px; }
+    .pill{ font-size:10px; }
+}
+
+.captcha-wrap {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 16px;
+    transform: scale(0.95);
+    transform-origin: center;
+}

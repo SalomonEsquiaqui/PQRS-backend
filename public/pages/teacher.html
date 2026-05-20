@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel Docente - PQRS CUL</title>
+    <link rel="stylesheet" href="../css/teacher.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body>
+
+    <!-- NAVBAR -->
+    <nav class="navbar">
+        <div class="nav-brand">
+            <i class="fas fa-chalkboard-teacher"></i>
+            <span>PQRS <b>CUL</b></span>
+        </div>
+        <button class="nav-toggle" onclick="toggleMenu()" aria-label="Menú">
+            <i class="fas fa-bars"></i>
+        </button>
+        <ul class="nav-links" id="navLinks">
+            <li><a href="#form-section"><i class="fas fa-plus-circle"></i> Nueva PQRS</a></li>
+            <li><a href="#assigned-section"><i class="fas fa-tasks"></i> Asignadas a mí</a></li>
+            <li><a href="#history-section"><i class="fas fa-history"></i> Mi historial</a></li>
+            <li><a href="#" onclick="cerrarSesion()" class="nav-logout">
+    <i class="fas fa-sign-out-alt"></i> Cerrar sesión
+</a></li>
+        </ul>
+    </nav>
+
+    <!-- HERO -->
+    <section class="hero">
+        <div class="hero-inner">
+            <div class="hero-text">
+                <span class="hero-badge">
+                    <i class="fas fa-chalkboard-teacher"></i>
+                    Panel Docente · CUL
+                </span>
+                <h1>Gestión académica<br>de solicitudes PQRS</h1>
+                <p>
+                    Registra tus propias solicitudes y gestiona
+                    las PQRS asignadas a tu área académica de forma
+                    eficiente y transparente.
+                </p>
+                <div class="hero-stats">
+                    <div class="hstat">
+                        <i class="fas fa-user-graduate"></i>
+                        <span>Área académica</span>
+                    </div>
+                    <div class="hstat">
+                        <i class="fas fa-clock"></i>
+                        <span>Respuesta en 48h</span>
+                    </div>
+                    <div class="hstat">
+                        <i class="fas fa-shield-alt"></i>
+                        <span>Confidencial</span>
+                    </div>
+                </div>
+            </div>
+            <div class="hero-metrics" id="heroMetrics">
+                <div class="hmetric">
+                    <span class="hm-num" id="hmTotal">0</span>
+                    <span class="hm-label">Total asignadas</span>
+                </div>
+                <div class="hmetric">
+                    <span class="hm-num" id="hmPending">0</span>
+                    <span class="hm-label">Pendientes</span>
+                </div>
+                <div class="hmetric">
+                    <span class="hm-num" id="hmProcess">0</span>
+                    <span class="hm-label">En proceso</span>
+                </div>
+                <div class="hmetric">
+                    <span class="hm-num" id="hmResolved">0</span>
+                    <span class="hm-label">Resueltas</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- MAIN -->
+    <main class="main-content">
+
+        <!-- SOLICITUDES ASIGNADAS AL DOCENTE -->
+        <section class="card" id="assigned-section">
+            <div class="card-header">
+                <h2><i class="fas fa-tasks"></i> PQRS asignadas a mi área</h2>
+                <div class="header-actions">
+                    <span class="card-badge" id="assignedCount">Cargando...</span>
+                    <button class="btn-icon" onclick="cargarAsignadas()" title="Actualizar">
+                        <i class="fas fa-sync-alt"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="filter-bar">
+                <button class="filter-btn active" onclick="filtrarAsignadas('all', this)">Todas</button>
+                <button class="filter-btn" onclick="filtrarAsignadas(1, this)">
+                    <span class="status-dot pending"></span> Pendientes
+                </button>
+                <button class="filter-btn" onclick="filtrarAsignadas(2, this)">
+                    <span class="status-dot process"></span> En proceso
+                </button>
+                <button class="filter-btn" onclick="filtrarAsignadas(3, this)">
+                    <span class="status-dot resolved"></span> Resueltas
+                </button>
+            </div>
+
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Título</th>
+                            <th>Tipo</th>
+                            <th>Estado</th>
+                            <th>Fecha</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="assignedTable"></tbody>
+                </table>
+                <div id="assignedEmpty" class="empty-state hidden">
+                    <i class="fas fa-inbox"></i>
+                    <p>No hay solicitudes asignadas en esta categoría</p>
+                    <small>Las nuevas solicitudes aparecerán aquí automáticamente</small>
+                </div>
+            </div>
+        </section>
+
+        <!-- FORMULARIO: REGISTRAR PROPIA PQRS -->
+        <section class="card form-card" id="form-section">
+            <div class="card-header">
+                <h2><i class="fas fa-plus-circle"></i> Registrar mi propia PQRS</h2>
+                <span class="card-badge">Formulario docente</span>
+            </div>
+
+            <form id="pqrsForm">
+
+                <div class="form-row">
+                    <div class="field-group">
+                        <label><i class="fas fa-tag"></i> Tipo de solicitud</label>
+                        <select id="request_type_id" required>
+                            <option value="">Selecciona tipo</option>
+                            <option value="1">📋 Petición</option>
+                            <option value="2">😠 Queja</option>
+                            <option value="3">⚠️ Reclamo</option>
+                            <option value="4">💡 Sugerencia</option>
+                            <option value="5">🙏 Felicitación</option>
+                        </select>
+                    </div>
+                    <div class="field-group">
+                        <label><i class="fas fa-folder"></i> Categoría</label>
+                        <select id="category_id" required>
+                            <option value="">Selecciona categoría</option>
+                            <option value="1">🎓 Académico</option>
+                            <option value="2">💰 Financiero</option>
+                            <option value="3">💻 Sistemas</option>
+                            <option value="4">🏛️ Infraestructura</option>
+                            <option value="5">📋 Administrativo</option>
+                            <option value="6">📚 Biblioteca</option>
+                            <option value="7">🍽️ Bienestar universitario</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="field-group">
+                        <label><i class="fas fa-id-card"></i> Tipo de identificación</label>
+                        <select id="id_type" required>
+                            <option value="">Selecciona tipo</option>
+                            <option value="cc">Cédula de ciudadanía</option>
+                            <option value="ce">Cédula de extranjería</option>
+                            <option value="pp">Pasaporte</option>
+                        </select>
+                    </div>
+                    <div class="field-group">
+                        <label><i class="fas fa-calendar-alt"></i> Fecha del evento</label>
+                        <input type="datetime-local" id="event_time" required>
+                    </div>
+                </div>
+
+                <div class="field-group">
+                    <label><i class="fas fa-heading"></i> Título de la solicitud</label>
+                    <input type="text" id="title" placeholder="Resume brevemente tu solicitud" required maxlength="100">
+                </div>
+
+                <div class="field-group">
+                    <label><i class="fas fa-align-left"></i> Descripción detallada</label>
+                    <textarea id="description" placeholder="Describe detalladamente lo sucedido, incluyendo fechas, personas involucradas y cualquier información relevante..." required></textarea>
+                </div>
+
+                <div class="field-group">
+                    <label><i class="fas fa-paperclip"></i> Archivos adjuntos <span class="optional">(opcional)</span></label>
+                    <div class="file-drop" id="fileDrop" onclick="document.getElementById('fileInput').click()">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                        <span>Haz clic o arrastra tus archivos aquí</span>
+                        <small>PDF, imágenes, documentos · Máx. 5MB por archivo</small>
+                    </div>
+                    <input type="file" id="fileInput" multiple accept=".pdf,.jpg,.jpeg,.png,.doc,.docx" style="display:none" onchange="showFiles(this)">
+                    <div id="fileList" class="file-list"></div>
+                </div>
+
+                <button type="submit" class="btn-primary">
+                    <i class="fas fa-paper-plane"></i>
+                    Registrar solicitud
+                </button>
+
+            </form>
+        </section>
+
+        <!-- HISTORIAL PROPIO DEL DOCENTE -->
+        <section class="card history-card" id="history-section">
+            <div class="card-header">
+                <h2><i class="fas fa-history"></i> Mi historial de solicitudes</h2>
+                <div class="header-actions">
+                    <span class="card-badge" id="historyCount">0 registros</span>
+                    <button class="btn-icon" onclick="cargarHistorial()" title="Actualizar">
+                        <i class="fas fa-sync-alt"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Título</th>
+                            <th>Tipo</th>
+                            <th>Estado</th>
+                            <th>Fecha</th>
+                            <th>Respuesta recibida</th>
+                        </tr>
+                    </thead>
+                    <tbody id="historyTable"></tbody>
+                </table>
+                <div id="historyEmpty" class="empty-state hidden">
+                    <i class="fas fa-folder-open"></i>
+                    <p>Aún no has registrado solicitudes</p>
+                    <small>Usa el formulario de arriba para crear tu primera PQRS</small>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="footer">
+        <p><i class="fas fa-university"></i> Corporación Universitaria Latinoamericana · PQRS 2025</p>
+    </footer>
+
+    <script src="../js/teacher.js"></script>
+</body>
+</html>
