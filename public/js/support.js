@@ -1,5 +1,5 @@
-const API          = "http://localhost:3000/api/requests";
-const RESPONSE_API = "http://localhost:3000/api/responses";
+const API          = "https://pqrs-cul.onrender.com/api/requests";
+const RESPONSE_API = "https://pqrs-cul.onrender.com/api/responses";
 const user = JSON.parse(localStorage.getItem('user'));
 if (!user || user.user_type !== 'support') {
     window.location.href = "/pages/login.html";
