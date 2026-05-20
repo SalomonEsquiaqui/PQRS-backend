@@ -1,4 +1,4 @@
-const API_URL = "http://localhost:3000/api/auth";
+const API_URL = "https://pqrs-cul.onrender.com/api/auth";
 
 /* =========================
    SESIÓN ACTIVA
@@ -183,7 +183,7 @@ document.getElementById("loginForm")
 
             showMessage("Verificando captcha...", "success");
 
-            const captchaRes  = await fetch("http://localhost:3000/api/captcha/verify", {
+            const captchaRes = await fetch("https://pqrs-cul.onrender.com/api/captcha/verify", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ token: captchaToken })
@@ -249,7 +249,7 @@ document.getElementById("loginForm")
 
                     showMessage("Validando PIN...", "success");
 
-                    const pinRes  = await fetch("http://localhost:3000/api/pins/validate", {
+                    const pinRes = await fetch("https://pqrs-cul.onrender.com/api/pins/validate", {
                         method: "POST",
                         headers: { "Content-Type": "application/json" },
                         body: JSON.stringify({ role: currentRole, pin })
