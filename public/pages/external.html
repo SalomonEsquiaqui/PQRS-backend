@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel Externo - PQRS CUL</title>
+    <link rel="stylesheet" href="../css/external.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body>
+
+    <!-- NAVBAR -->
+    <nav class="navbar">
+        <div class="nav-brand">
+            <i class="fas fa-comments"></i>
+            <span>PQRS <b>CUL</b></span>
+        </div>
+        <button class="nav-toggle" onclick="toggleMenu()" aria-label="Menú">
+            <i class="fas fa-bars"></i>
+        </button>
+        <ul class="nav-links" id="navLinks">
+            <li><a href="#form-section"><i class="fas fa-plus-circle"></i> Nueva solicitud</a></li>
+            <li><a href="#history-section"><i class="fas fa-history"></i> Historial</a></li>
+            <li><a href="#tracking-section"><i class="fas fa-search"></i> Seguimiento</a></li>
+            <li>
+                <a href="#" onclick="cerrarSesion()" class="nav-logout">
+                    <i class="fas fa-sign-out-alt"></i> Cerrar sesión
+                </a>
+            </li>
+        </ul>
+    </nav>
+
+    <!-- HERO -->
+    <section class="hero">
+        <div class="hero-inner">
+            <div class="hero-text">
+                <span class="hero-badge"><i class="fas fa-user-tie"></i> Usuario Externo</span>
+                <h1>Tu opinión también<br>construye la CUL</h1>
+                <p>Si visitaste nuestras instalaciones y tienes algo que reportar, estamos aquí para escucharte. Registra tu solicitud de forma rápida, segura y con seguimiento en tiempo real.</p>
+                <div class="hero-stats">
+                    <div class="hstat">
+                        <i class="fas fa-check-circle"></i>
+                        <span>Respuesta garantizada</span>
+                    </div>
+                    <div class="hstat">
+                        <i class="fas fa-clock"></i>
+                        <span>3 a 4 días hábiles</span>
+                    </div>
+                    <div class="hstat">
+                        <i class="fas fa-shield-alt"></i>
+                        <span>100% confidencial</span>
+                    </div>
+                </div>
+            </div>
+            <div class="hero-icons">
+                <div class="icon-card"><i class="fas fa-headset"></i><span>Soporte</span></div>
+                <div class="icon-card"><i class="fas fa-file-alt"></i><span>Solicitudes</span></div>
+                <div class="icon-card"><i class="fas fa-chart-line"></i><span>Seguimiento</span></div>
+                <div class="icon-card"><i class="fas fa-user-check"></i><span>Mi perfil</span></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CONTENIDO PRINCIPAL -->
+    <main class="main-content">
+
+        <!-- FORMULARIO PQRS -->
+        <section class="card form-card" id="form-section">
+            <div class="card-header">
+                <h2><i class="fas fa-plus-circle"></i> Registrar nueva PQRS</h2>
+                <span class="card-badge">Formulario</span>
+            </div>
+
+            <form id="pqrsForm">
+                <div class="form-row">
+                    <div class="field-group">
+                        <label><i class="fas fa-tag"></i> Tipo de solicitud</label>
+                        <select id="request_type_id" required>
+                            <option value="">Selecciona tipo</option>
+                            <option value="1">📋 Petición</option>
+                            <option value="2">😠 Queja</option>
+                            <option value="3">⚠️ Reclamo</option>
+                            <option value="4">💡 Sugerencia</option>
+                            <option value="5">🙏 Felicitación</option>
+                        </select>
+                    </div>
+                    <div class="field-group">
+                        <label><i class="fas fa-folder"></i> Categoría</label>
+                        <select id="category_id" required>
+                            <option value="">Selecciona categoría</option>
+                            <option value="1">🎓 Académico</option>
+                            <option value="2">💰 Financiero</option>
+                            <option value="3">💻 Sistemas</option>
+                            <option value="4">🏛️ Infraestructura</option>
+                            <option value="5">📋 Administrativo</option>
+                            <option value="6">📚 Biblioteca</option>
+                            <option value="7">🍽️ Bienestar universitario</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="field-group">
+                        <label><i class="fas fa-id-card"></i> Tipo de identificación</label>
+                        <select id="id_type" required>
+                            <option value="">Selecciona tipo</option>
+                            <option value="cc">Cédula de ciudadanía</option>
+                            <option value="ti">Tarjeta de identidad</option>
+                            <option value="ce">Cédula de extranjería</option>
+                            <option value="pp">Pasaporte</option>
+                        </select>
+                    </div>
+                    <div class="field-group">
+                        <label><i class="fas fa-calendar-alt"></i> Fecha del evento</label>
+                        <input type="datetime-local" id="event_time" required>
+                    </div>
+                </div>
+
+                <div class="field-group">
+                    <label><i class="fas fa-heading"></i> Título de la solicitud</label>
+                    <input type="text" id="title" placeholder="Resume brevemente tu solicitud" required maxlength="100">
+                </div>
+
+                <div class="field-group">
+                    <label><i class="fas fa-align-left"></i> Descripción detallada</label>
+                    <textarea id="description" placeholder="Describe detalladamente lo sucedido, incluyendo fecha, lugar y cualquier información relevante..." required></textarea>
+                </div>
+
+                <div class="field-group">
+                    <label><i class="fas fa-paperclip"></i> Archivos adjuntos <span class="optional">(opcional)</span></label>
+                    <div class="file-drop" id="fileDrop" onclick="document.getElementById('fileInput').click()">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                        <span>Haz clic o arrastra tus archivos aquí</span>
+                        <small>PDF, imágenes, documentos · Máx. 5MB por archivo</small>
+                    </div>
+                    <input type="file" id="fileInput" multiple accept=".pdf,.jpg,.jpeg,.png,.doc,.docx" style="display:none" onchange="showFiles(this)">
+                    <div id="fileList" class="file-list"></div>
+                </div>
+
+                <button type="submit" class="btn-primary">
+                    <i class="fas fa-paper-plane"></i>
+                    Registrar solicitud
+                </button>
+            </form>
+        </section>
+
+        <!-- HISTORIAL -->
+        <section class="card history-card" id="history-section">
+            <div class="card-header">
+                <h2><i class="fas fa-history"></i> Historial de solicitudes</h2>
+                <div class="header-actions">
+                    <span class="card-badge" id="requestCount">Cargando...</span>
+                    <button class="btn-icon" onclick="cargarHistorial()" title="Actualizar">
+                        <i class="fas fa-sync-alt"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="filter-bar">
+                <button class="filter-btn active" onclick="filtrarEstado('all', this)">Todos</button>
+                <button class="filter-btn" onclick="filtrarEstado(1, this)">
+                    <span class="status-dot pending"></span> Pendiente
+                </button>
+                <button class="filter-btn" onclick="filtrarEstado(2, this)">
+                    <span class="status-dot process"></span> En proceso
+                </button>
+                <button class="filter-btn" onclick="filtrarEstado(3, this)">
+                    <span class="status-dot resolved"></span> Resuelto
+                </button>
+            </div>
+
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Título</th>
+                            <th>Tipo</th>
+                            <th>Estado</th>
+                            <th>Fecha</th>
+                            <th>Respuesta</th>
+                        </tr>
+                    </thead>
+                    <tbody id="historyTable"></tbody>
+                </table>
+                <div id="emptyState" class="empty-state hidden">
+                    <i class="fas fa-inbox"></i>
+                    <p>No hay solicitudes registradas aún</p>
+                    <small>Usa el formulario de arriba para crear tu primera PQRS</small>
+                </div>
+            </div>
+        </section>
+
+        <!-- SEGUIMIENTO -->
+        <section class="card tracking-card" id="tracking-section">
+            <div class="card-header">
+                <h2><i class="fas fa-search"></i> Seguimiento de solicitud</h2>
+                <span class="card-badge">Tracking</span>
+            </div>
+
+            <div class="tracking-search">
+                <div class="tracking-input-wrap">
+                    <i class="fas fa-hashtag tracking-icon"></i>
+                    <input type="number" id="trackingId" placeholder="Ingresa el ID de tu solicitud (ej: 12)" min="1">
+                </div>
+                <button class="btn-track" onclick="buscarSolicitud()">
+                    <i class="fas fa-search"></i> Buscar
+                </button>
+            </div>
+
+            <div id="trackingResult" class="tracking-result hidden"></div>
+        </section>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <p>
+            <i class="fas fa-university"></i>
+            Corporación Universitaria Latinoamericana · PQRS 2025
+        </p>
+    </footer>
+
+    <script src="../js/external.js"></script>
+</body>
+</html>
