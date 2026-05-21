@@ -9,7 +9,8 @@ if (sesionActiva) {
         student: '/pages/student.html',
         teacher: '/pages/teacher.html',
         support: '/pages/support.html',
-        admin:   '/pages/admin.html'
+        admin:    '/pages/admin.html',
+        external: '/pages/external.html'
     };
     const destino = destinos[sesionActiva.user_type];
     if (destino) window.location.href = destino;
@@ -19,6 +20,15 @@ if (sesionActiva) {
    CONFIGURACIÓN DE ROLES
 ========================= */
 const roleConfigs = {
+    external: {
+        label: "Externo",
+        icon: "fas fa-user-tie",
+        emailDomain: null,
+        hint: "Usa tu correo personal · ej: nombre@gmail.com",
+        badgeClass: "badge-external",
+        redirect: "/pages/external.html",
+        desc: "Visitante o usuario externo"
+    },
     student: {
         label: "Estudiante",
         icon: "fas fa-graduation-cap",
@@ -133,6 +143,16 @@ function onRoleChange() {
         pinGroup.classList.add("hidden");
         document.getElementById("rolePin").value = "";
     }
+
+    // ✅ Cambiar label y placeholder del correo según rol
+    const emailLabel = document.getElementById("emailLabel");
+    if (currentRole === "external") {
+        emailLabel.textContent = "Correo personal";
+        document.getElementById("email").placeholder = "ejemplo@gmail.com";
+    } else {
+        emailLabel.textContent = "Correo institucional";
+        document.getElementById("email").placeholder = "usuario@est.cul.edu.co";
+    }
 }
 
 /* =========================
@@ -207,7 +227,7 @@ document.getElementById("loginForm")
             }
 
             /* VALIDAR CORREO */
-            if (!email.endsWith(config.emailDomain)) {
+            if (config.emailDomain && !email.endsWith(config.emailDomain)) {
                 showMessage(`El correo debe terminar en ${config.emailDomain}`, "error");
                 return;
             }
