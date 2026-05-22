@@ -171,6 +171,7 @@
                             <th>Estado</th>
                             <th>Cambiar estado</th>
                             <th>Responder</th>
+                            <th>Info</th>
                         </tr>
                     </thead>
                     <tbody id="requestsTable"></tbody>
@@ -183,6 +184,61 @@
         </div>
 
     </main>
+
+    <!-- MODAL DE INFORMACIÓN -->
+    <div class="modal-overlay hidden" id="modalOverlay" onclick="cerrarModal()">
+        <div class="modal-box" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <div class="modal-title-wrap">
+                    <span class="modal-tag">Detalle de solicitud</span>
+                    <h2 id="modalTitle">—</h2>
+                </div>
+                <button class="modal-close" onclick="cerrarModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <div class="modal-body">
+
+                <!-- ESTADO + TIPO -->
+                <div class="modal-meta" id="modalMeta"></div>
+
+                <!-- DATOS DEL SOLICITANTE -->
+                <div class="modal-section">
+                    <p class="modal-section-title">
+                        <i class="fas fa-user"></i> Información del solicitante
+                    </p>
+                    <div class="modal-grid" id="modalUserInfo"></div>
+                </div>
+
+                <!-- DESCRIPCIÓN -->
+                <div class="modal-section">
+                    <p class="modal-section-title">
+                        <i class="fas fa-align-left"></i> Descripción de la solicitud
+                    </p>
+                    <div class="modal-desc" id="modalDesc"></div>
+                </div>
+
+                <!-- RESPUESTA -->
+                <div class="modal-section" id="modalResponseSection">
+                    <p class="modal-section-title">
+                        <i class="fas fa-comment-dots"></i> Respuesta registrada
+                    </p>
+                    <div class="modal-response" id="modalResponseContent"></div>
+                </div>
+
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn-modal-close" onclick="cerrarModal()">Cerrar</button>
+                <button class="btn-modal-reply" id="modalReplyBtn">
+                    <i class="fas fa-reply"></i> Responder desde aquí
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="/js/admin.js"></script>
 
     <script src="/js/admin.js"></script>
 </body>

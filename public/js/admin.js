@@ -94,6 +94,11 @@ function renderTabla(solicitudes) {
                         <i class="fas fa-reply"></i> Responder
                     </button>
                 </td>
+                <td>
+                    <button class="btn-action btn-info" onclick="verDetalle(${s.id})">
+                        <i class="fas fa-info-circle"></i> Info
+                    </button>
+                </td>
             </tr>
         `;
     });
@@ -190,6 +195,113 @@ function buscarSolicitudes() {
     );
     renderTabla(filtradas);
 }
+
+/* === MODAL DE DETALLE === */
+let respuestasCacheAdmin = [];
+
+async function verDetalle(id) {
+    const solicitud = todasLasSolicitudes.find(s => s.id == id);
+    if (!solicitud) return;
+
+    // Cargar respuestas si no están en cache
+    if (respuestasCacheAdmin.length === 0) {
+        try {
+            const r = await fetch(RESPONSE_API);
+            respuestasCacheAdmin = await r.json();
+        } catch(e) { respuestasCacheAdmin = []; }
+    }
+
+    const respuesta = respuestasCacheAdmin.find(r => r.request_id == id);
+
+    // Tipos y categorías
+    const tipoLabels = { 1:"Petición", 2:"Queja", 3:"Reclamo", 4:"Sugerencia", 5:"Felicitación" };
+    const catLabels  = { 1:"Académico", 2:"Financiero", 3:"Sistemas", 4:"Infraestructura", 5:"Administrativo", 6:"Biblioteca", 7:"Bienestar universitario" };
+
+    // Estado
+    let badgeClass = "badge-pending"; let estadoText = "Pendiente";
+    if (solicitud.status_id == 2) { badgeClass = "badge-process";  estadoText = "En proceso"; }
+    if (solicitud.status_id == 3) { badgeClass = "badge-resolved"; estadoText = "Resuelto"; }
+
+    const fecha = solicitud.created_at
+        ? new Date(solicitud.created_at).toLocaleString("es-CO", {
+            year:"numeric", month:"long", day:"numeric",
+            hour:"2-digit", minute:"2-digit"
+          })
+        : "—";
+
+    // Nombre del solicitante
+    const nombre = solicitud.users
+        ? `${solicitud.users.first_name || ""} ${solicitud.users.last_name || ""}`.trim()
+        : "No disponible";
+
+    // Llenar modal
+    document.getElementById("modalTitle").textContent = solicitud.title || "Sin título";
+
+    document.getElementById("modalMeta").innerHTML = `
+        <span class="modal-badge status-badge ${badgeClass}">
+            <i class="fas fa-circle" style="font-size:8px"></i> ${estadoText}
+        </span>
+        <span class="modal-badge" style="background:#EAF3DE;color:#3B6D11;">
+            <i class="fas fa-tag" style="font-size:11px"></i>
+            ${tipoLabels[solicitud.request_type_id] || "—"}
+        </span>
+        <span class="modal-badge" style="background:#E6F1FB;color:#0057D9;">
+            <i class="fas fa-folder" style="font-size:11px"></i>
+            ${catLabels[solicitud.category_id] || "—"}
+        </span>
+    `;
+
+    document.getElementById("modalUserInfo").innerHTML = `
+        <div class="modal-field">
+            <p class="modal-field-label">Solicitante</p>
+            <p class="modal-field-value">${nombre}</p>
+        </div>
+        <div class="modal-field">
+            <p class="modal-field-label">ID solicitud</p>
+            <p class="modal-field-value">#${solicitud.id}</p>
+        </div>
+        <div class="modal-field">
+            <p class="modal-field-label">Fecha de registro</p>
+            <p class="modal-field-value">${fecha}</p>
+        </div>
+        <div class="modal-field">
+            <p class="modal-field-label">Categoría</p>
+            <p class="modal-field-value">${catLabels[solicitud.category_id] || "—"}</p>
+        </div>
+    `;
+
+    document.getElementById("modalDesc").textContent =
+        solicitud.description || "Sin descripción registrada.";
+
+    const respContent = document.getElementById("modalResponseContent");
+    if (respuesta) {
+        respContent.textContent = respuesta.message;
+        respContent.className = "modal-response";
+    } else {
+        respContent.textContent = "Esta solicitud aún no tiene respuesta registrada.";
+        respContent.className = "modal-response sin-respuesta";
+    }
+
+    // Botón responder desde modal
+    document.getElementById("modalReplyBtn").onclick = () => {
+        cerrarModal();
+        responderSolicitud(id);
+    };
+
+    document.getElementById("modalOverlay").classList.remove("hidden");
+    document.body.style.overflow = "hidden";
+}
+
+function cerrarModal() {
+    document.getElementById("modalOverlay").classList.add("hidden");
+    document.body.style.overflow = "";
+    respuestasCacheAdmin = []; // limpiar para refrescar en el próximo detalle
+}
+
+// Cerrar con Escape
+document.addEventListener("keydown", e => {
+    if (e.key === "Escape") cerrarModal();
+});
 
 /* === INIT === */
 cargarSolicitudes();
