@@ -30,28 +30,28 @@
             <span class="nav-section">Gestión</span>
             <ul>
                 <li>
-                    <a href="#" class="nav-item active" onclick="filterByStatus('all', this)">
+                    <a href="#" class="nav-item active" onclick="mostrarGestion(this); filterByStatus('all', this)">
                         <i class="fas fa-list-ul"></i>
                         <span>Todas las solicitudes</span>
                         <span class="nav-count" id="countAll">0</span>
                     </a>
                 </li>
                 <li>
-                    <a href="#" class="nav-item" onclick="filterByStatus(1, this)">
+                    <a href="#" class="nav-item" onclick="mostrarGestion(this); filterByStatus(1, this)">
                         <i class="fas fa-clock"></i>
                         <span>Pendientes</span>
                         <span class="nav-count pending" id="countPending">0</span>
                     </a>
                 </li>
                 <li>
-                    <a href="#" class="nav-item" onclick="filterByStatus(2, this)">
+                    <a href="#" class="nav-item" onclick="filterByStatus(2, this)"><a href="#" class="nav-item" onclick="mostrarGestion(this); filterByStatus(2, this)"></a>
                         <i class="fas fa-spinner"></i>
                         <span>En proceso</span>
                         <span class="nav-count process" id="countProcess">0</span>
                     </a>
                 </li>
                 <li>
-                    <a href="#" class="nav-item" onclick="filterByStatus(3, this)">
+                    <a href="#" class="nav-item" onclick="mostrarGestion(this); filterByStatus(3, this)">
                         <i class="fas fa-check-circle"></i>
                         <span>Resueltas</span>
                         <span class="nav-count resolved" id="countResolved">0</span>
@@ -62,19 +62,20 @@
             <span class="nav-section">Sistema</span>
             <ul>
                 <li>
-                    <a href="#" class="nav-item">
+                    <a href="#" class="nav-item" onclick="mostrarSeccion('usuarios', this)">
                         <i class="fas fa-users"></i>
                         <span>Usuarios</span>
+                        <span class="nav-count" id="countUsuarios">0</span>
                     </a>
                 </li>
                 <li>
-                    <a href="#" class="nav-item">
+                    <a href="#" class="nav-item" onclick="mostrarSeccion('reportes', this)">
                         <i class="fas fa-chart-bar"></i>
                         <span>Reportes</span>
                     </a>
                 </li>
                 <li>
-                    <a href="#" class="nav-item">
+                    <a href="#" class="nav-item" onclick="mostrarSeccion('config', this)">
                         <i class="fas fa-cog"></i>
                         <span>Configuración</span>
                     </a>
@@ -185,6 +186,171 @@
 
     </main>
 
+    <!-- SECCIÓN USUARIOS -->
+        <div class="sys-section hidden" id="secUsuarios">
+            <div class="table-card">
+                <div class="table-header">
+                    <div>
+                        <h2>Usuarios registrados</h2>
+                        <p id="subtitleUsuarios">Cargando...</p>
+                    </div>
+                    <div class="table-actions">
+                        <div class="search-box">
+                            <i class="fas fa-search"></i>
+                            <input type="text" id="searchUsuarios"
+                                placeholder="Buscar usuario..."
+                                oninput="filtrarUsuarios()">
+                        </div>
+                        <button class="btn-refresh" onclick="cargarUsuarios()">
+                            <i class="fas fa-sync-alt"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Nombre</th>
+                                <th>Correo</th>
+                                <th>Rol</th>
+                                <th>Identificación</th>
+                                <th>Solicitudes</th>
+                            </tr>
+                        </thead>
+                        <tbody id="usuariosTable"></tbody>
+                    </table>
+                    <div id="usuariosEmpty" class="empty-state hidden">
+                        <i class="fas fa-users"></i>
+                        <p>No hay usuarios registrados</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SECCIÓN REPORTES -->
+        <div class="sys-section hidden" id="secReportes">
+            <div class="metrics-row" style="padding:24px 32px 8px;">
+                <div class="metric-card">
+                    <div class="metric-icon all"><i class="fas fa-file-alt"></i></div>
+                    <div class="metric-info">
+                        <span class="metric-num" id="repTotal">0</span>
+                        <span class="metric-label">Total PQRS</span>
+                    </div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-icon pending"><i class="fas fa-graduation-cap"></i></div>
+                    <div class="metric-info">
+                        <span class="metric-num" id="repAcademico">0</span>
+                        <span class="metric-label">Académicas</span>
+                    </div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-icon process"><i class="fas fa-tools"></i></div>
+                    <div class="metric-info">
+                        <span class="metric-num" id="repSistemas">0</span>
+                        <span class="metric-label">Sistemas</span>
+                    </div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-icon resolved"><i class="fas fa-check-circle"></i></div>
+                    <div class="metric-info">
+                        <span class="metric-num" id="repResueltas">0</span>
+                        <span class="metric-label">Resueltas</span>
+                    </div>
+                </div>
+            </div>
+            <div class="table-card" style="margin-top:0;">
+                <div class="table-header">
+                    <div>
+                        <h2>Reporte por tipo de solicitud</h2>
+                        <p>Distribución de PQRS registradas</p>
+                    </div>
+                    <button class="btn-refresh" onclick="generarReporte()">
+                        <i class="fas fa-sync-alt"></i>
+                    </button>
+                </div>
+                <div style="padding:24px 28px;" id="reporteContenido"></div>
+            </div>
+        </div>
+
+        <!-- SECCIÓN CONFIGURACIÓN -->
+        <div class="sys-section hidden" id="secConfig">
+            <div class="table-card">
+                <div class="table-header">
+                    <div>
+                        <h2>Configuración del sistema</h2>
+                        <p>Parámetros generales de la plataforma PQRS</p>
+                    </div>
+                </div>
+                <div style="padding:24px 28px;display:flex;flex-direction:column;gap:16px;">
+
+                    <div class="config-item">
+                        <div class="config-info">
+                            <p class="config-label">Tiempo máximo de respuesta</p>
+                            <p class="config-desc">Días hábiles para atender una solicitud</p>
+                        </div>
+                        <div class="config-control">
+                            <input type="number" id="configDias" value="4" min="1" max="30"
+                                style="width:80px;text-align:center;border-radius:10px;
+                                border:1.5px solid #e0e5ef;padding:8px;font-size:16px;
+                                font-weight:700;color:#0057D9;">
+                            <span style="font-size:13px;color:#aaa;">días</span>
+                        </div>
+                    </div>
+
+                    <div class="config-item">
+                        <div class="config-info">
+                            <p class="config-label">Actualización automática</p>
+                            <p class="config-desc">Intervalo de recarga del panel en segundos</p>
+                        </div>
+                        <div class="config-control">
+                            <select id="configInterval"
+                                style="border-radius:10px;border:1.5px solid #e0e5ef;
+                                padding:8px 12px;font-size:14px;color:#333;
+                                background:#f9fafc;appearance:none;">
+                                <option value="5000">5 seg</option>
+                                <option value="8000" selected>8 seg</option>
+                                <option value="15000">15 seg</option>
+                                <option value="30000">30 seg</option>
+                                <option value="60000">60 seg</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="config-item">
+                        <div class="config-info">
+                            <p class="config-label">Modo de notificaciones</p>
+                            <p class="config-desc">Mostrar alertas visuales al recibir nuevas solicitudes</p>
+                        </div>
+                        <div class="config-control">
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="configNotif" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="config-item">
+                        <div class="config-info">
+                            <p class="config-label">Versión del sistema</p>
+                            <p class="config-desc">PQRS CUL · Electiva BDD II · 2026-I</p>
+                        </div>
+                        <div class="config-control">
+                            <span class="sys-version">v1.0.0 BETA</span>
+                        </div>
+                    </div>
+
+                    <button class="btn-modal-reply"
+                        style="align-self:flex-end;margin-top:8px;"
+                        onclick="guardarConfig()">
+                        <i class="fas fa-save"></i> Guardar configuración
+                    </button>
+
+                </div>
+            </div>
+        </div>
+
     <!-- MODAL DE INFORMACIÓN -->
     <div class="modal-overlay hidden" id="modalOverlay" onclick="cerrarModal()">
         <div class="modal-box" onclick="event.stopPropagation()">
@@ -239,7 +405,4 @@
     </div>
 
     <script src="/js/admin.js"></script>
-
-    <script src="/js/admin.js"></script>
-</body>
 </html>

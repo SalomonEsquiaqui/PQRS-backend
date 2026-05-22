@@ -751,3 +751,138 @@ tbody tr:hover{ background:#f7f9fd; }
     .modal-box{ border-radius:14px; }
     .modal-header, .modal-body, .modal-footer{ padding-left:16px; padding-right:16px; }
 }
+
+/* === SECCIONES DE SISTEMA === */
+.sys-section{ animation: fadeIn 0.25s ease; }
+
+/* ROL BADGES */
+.role-badge{
+    display:inline-flex;
+    align-items:center;
+    gap:5px;
+    padding:4px 10px;
+    border-radius:20px;
+    font-size:11px;
+    font-weight:700;
+}
+
+.role-student{  background:#E6F1FB; color:#0057D9; }
+.role-teacher{  background:#EAF3DE; color:#3B6D11; }
+.role-support{  background:#FFF3E0; color:#E65100; }
+.role-admin{    background:#FAECE7; color:#993C1D; }
+.role-external{ background:#E8F5E9; color:#2E7D32; }
+
+/* BARRA DE PROGRESO REPORTE */
+.report-bar-wrap{
+    display:flex;
+    align-items:center;
+    gap:14px;
+    margin-bottom:14px;
+}
+
+.report-bar-label{
+    width:130px;
+    font-size:13px;
+    font-weight:600;
+    color:#444;
+    flex-shrink:0;
+}
+
+.report-bar-track{
+    flex:1;
+    height:10px;
+    background:#f0f4fb;
+    border-radius:10px;
+    overflow:hidden;
+}
+
+.report-bar-fill{
+    height:100%;
+    border-radius:10px;
+    transition:width 0.6s ease;
+}
+
+.report-bar-num{
+    font-size:13px;
+    font-weight:700;
+    color:#0057D9;
+    width:36px;
+    text-align:right;
+    flex-shrink:0;
+}
+
+/* CONFIG ITEMS */
+.config-item{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    background:#f9fafc;
+    border:1.5px solid #f0f4fb;
+    border-radius:14px;
+    padding:16px 20px;
+    gap:16px;
+    flex-wrap:wrap;
+}
+
+.config-label{
+    font-size:14px;
+    font-weight:600;
+    color:#333;
+    margin-bottom:3px;
+}
+
+.config-desc{
+    font-size:12px;
+    color:#aaa;
+}
+
+.config-control{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    flex-shrink:0;
+}
+
+/* TOGGLE SWITCH */
+.toggle-switch{
+    position:relative;
+    display:inline-block;
+    width:46px;
+    height:26px;
+    cursor:pointer;
+}
+
+.toggle-switch input{ opacity:0; width:0; height:0; }
+
+.toggle-slider{
+    position:absolute;
+    inset:0;
+    background:#e0e5ef;
+    border-radius:26px;
+    transition:0.3s;
+}
+
+.toggle-slider::before{
+    content:'';
+    position:absolute;
+    width:18px;
+    height:18px;
+    left:4px;
+    bottom:4px;
+    background:white;
+    border-radius:50%;
+    transition:0.3s;
+    box-shadow:0 1px 4px rgba(0,0,0,0.2);
+}
+
+.toggle-switch input:checked + .toggle-slider{ background:#0057D9; }
+.toggle-switch input:checked + .toggle-slider::before{ transform:translateX(20px); }
+
+.sys-version{
+    background:#E6F1FB;
+    color:#0057D9;
+    font-size:12px;
+    font-weight:700;
+    padding:6px 14px;
+    border-radius:20px;
+}

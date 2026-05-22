@@ -23,7 +23,13 @@ async function cargarSolicitudes() {
         todasLasSolicitudes = await response.json();
 
         actualizarMetricas();
-        renderTabla(todasLasSolicitudes);
+
+        // ✅ Respeta el filtro activo al recargar
+        const filtradas = filtroActual === "all"
+            ? todasLasSolicitudes
+            : todasLasSolicitudes.filter(s => s.status_id == filtroActual);
+
+        renderTabla(filtradas);
 
     } catch (error) {
         console.error("Error cargando solicitudes:", error);
@@ -302,6 +308,205 @@ function cerrarModal() {
 document.addEventListener("keydown", e => {
     if (e.key === "Escape") cerrarModal();
 });
+
+/* === SECCIONES DE SISTEMA === */
+let todosLosUsuarios = [];
+let intervaloActual  = null;
+
+function mostrarSeccion(seccion, el) {
+
+    // Quitar activo de todos los nav-items
+    document.querySelectorAll(".nav-item").forEach(i => i.classList.remove("active"));
+    el.classList.add("active");
+
+    // Ocultar tabla principal y secciones de sistema
+    document.querySelector(".table-card").classList.add("hidden");
+    document.querySelectorAll(".sys-section").forEach(s => s.classList.add("hidden"));
+    document.querySelector(".metrics-row").classList.add("hidden");
+
+    if (seccion === "usuarios") {
+        document.getElementById("secUsuarios").classList.remove("hidden");
+        cargarUsuarios();
+    } else if (seccion === "reportes") {
+        document.getElementById("secReportes").classList.remove("hidden");
+        generarReporte();
+    } else if (seccion === "config") {
+        document.getElementById("secConfig").classList.remove("hidden");
+    }
+
+    return false;
+}
+
+function mostrarGestion(el) {
+    document.querySelectorAll(".nav-item").forEach(i => i.classList.remove("active"));
+    el.classList.add("active");
+    document.querySelector(".table-card").classList.remove("hidden");
+    document.querySelector(".metrics-row").classList.remove("hidden");
+    document.querySelectorAll(".sys-section").forEach(s => s.classList.add("hidden"));
+    filtroActual = "all";
+    renderTabla(todasLasSolicitudes);
+    return false;
+}
+
+/* ---- USUARIOS ---- */
+async function cargarUsuarios() {
+    try {
+        const res = await fetch("https://pqrs-cul.onrender.com/api/users");
+        todosLosUsuarios = await res.json();
+
+        document.getElementById("countUsuarios").textContent = todosLosUsuarios.length;
+        document.getElementById("subtitleUsuarios").textContent =
+            `${todosLosUsuarios.length} usuario${todosLosUsuarios.length !== 1 ? "s" : ""} registrados`;
+
+        renderUsuarios(todosLosUsuarios);
+    } catch(e) { console.error(e); }
+}
+
+function renderUsuarios(usuarios) {
+    const tbody = document.getElementById("usuariosTable");
+    const empty = document.getElementById("usuariosEmpty");
+
+    if (!usuarios.length) {
+        tbody.innerHTML = "";
+        empty.classList.remove("hidden");
+        return;
+    }
+
+    empty.classList.add("hidden");
+
+    const roleLabels = {
+        student: ["Estudiante", "role-student"],
+        teacher: ["Docente",    "role-teacher"],
+        support: ["Soporte",    "role-support"],
+        admin:   ["Admin",      "role-admin"],
+        external:["Externo",    "role-external"]
+    };
+
+    tbody.innerHTML = "";
+    usuarios.forEach(u => {
+        const [rolLabel, rolClass] = roleLabels[u.user_type] || ["—", ""];
+        const solicitudes = todasLasSolicitudes.filter(s => s.user_id == u.id).length;
+
+        tbody.innerHTML += `
+            <tr>
+                <td><b>#${u.id}</b></td>
+                <td>${u.first_name || ""} ${u.last_name || ""}</td>
+                <td style="color:#666;font-size:13px">${u.email || "—"}</td>
+                <td>
+                    <span class="role-badge ${rolClass}">${rolLabel}</span>
+                </td>
+                <td style="font-size:13px;color:#666">
+                    ${u.identification_number || "—"}
+                </td>
+                <td>
+                    <span class="status-badge badge-pending"
+                        style="background:#E6F1FB;color:#0057D9;">
+                        ${solicitudes} solicitud${solicitudes !== 1 ? "es" : ""}
+                    </span>
+                </td>
+            </tr>
+        `;
+    });
+}
+
+function filtrarUsuarios() {
+    const q = document.getElementById("searchUsuarios").value.toLowerCase();
+    const filtrados = todosLosUsuarios.filter(u =>
+        (u.first_name  && u.first_name.toLowerCase().includes(q))  ||
+        (u.last_name   && u.last_name.toLowerCase().includes(q))   ||
+        (u.email       && u.email.toLowerCase().includes(q))       ||
+        (u.user_type   && u.user_type.toLowerCase().includes(q))
+    );
+    renderUsuarios(filtrados);
+}
+
+/* ---- REPORTES ---- */
+function generarReporte() {
+    const total    = todasLasSolicitudes.length;
+    const pending  = todasLasSolicitudes.filter(s => s.status_id == 1).length;
+    const process  = todasLasSolicitudes.filter(s => s.status_id == 2).length;
+    const resolved = todasLasSolicitudes.filter(s => s.status_id == 3).length;
+
+    document.getElementById("repTotal").textContent    = total;
+    document.getElementById("repAcademico").textContent =
+        todasLasSolicitudes.filter(s => s.category_id == 1).length;
+    document.getElementById("repSistemas").textContent  =
+        todasLasSolicitudes.filter(s => s.category_id == 3).length;
+    document.getElementById("repResueltas").textContent = resolved;
+
+    const tipoLabels = {
+        1:"Petición", 2:"Queja", 3:"Reclamo", 4:"Sugerencia", 5:"Felicitación"
+    };
+    const colores = {
+        1:"#0057D9", 2:"#E65100", 3:"#F57F17", 4:"#2E7D32", 5:"#6A1B9A"
+    };
+
+    let html = "";
+    for (let t = 1; t <= 5; t++) {
+        const count = todasLasSolicitudes.filter(s => s.request_type_id == t).length;
+        const pct   = total > 0 ? Math.round((count / total) * 100) : 0;
+        html += `
+            <div class="report-bar-wrap">
+                <span class="report-bar-label">${tipoLabels[t]}</span>
+                <div class="report-bar-track">
+                    <div class="report-bar-fill"
+                        style="width:${pct}%;background:${colores[t]}">
+                    </div>
+                </div>
+                <span class="report-bar-num">${count}</span>
+            </div>
+        `;
+    }
+
+    // Barras por estado
+    const estadoData = [
+        { label:"Pendiente", count:pending,  color:"#F57F17" },
+        { label:"En proceso",count:process,  color:"#E65100" },
+        { label:"Resuelto",  count:resolved, color:"#2E7D32" }
+    ];
+
+    html += `<hr style="border:none;border-top:1.5px solid #f0f4fb;margin:20px 0;">
+             <p style="font-size:11px;font-weight:700;text-transform:uppercase;
+                letter-spacing:1px;color:#aaa;margin-bottom:14px;">Por estado</p>`;
+
+    estadoData.forEach(e => {
+        const pct = total > 0 ? Math.round((e.count / total) * 100) : 0;
+        html += `
+            <div class="report-bar-wrap">
+                <span class="report-bar-label">${e.label}</span>
+                <div class="report-bar-track">
+                    <div class="report-bar-fill"
+                        style="width:${pct}%;background:${e.color}">
+                    </div>
+                </div>
+                <span class="report-bar-num">${e.count}</span>
+            </div>
+        `;
+    });
+
+    document.getElementById("reporteContenido").innerHTML = html;
+}
+
+/* ---- CONFIGURACIÓN ---- */
+function guardarConfig() {
+    const dias     = document.getElementById("configDias").value;
+    const interval = document.getElementById("configInterval").value;
+    const notif    = document.getElementById("configNotif").checked;
+
+    // Actualizar intervalo de recarga
+    if (intervaloActual) clearInterval(intervaloActual);
+    intervaloActual = setInterval(cargarSolicitudes, parseInt(interval));
+
+    Swal.fire({
+        icon: "success",
+        title: "Configuración guardada",
+        html: `Tiempo de respuesta: <b>${dias} días</b><br>
+               Recarga: <b>cada ${interval/1000} seg</b><br>
+               Notificaciones: <b>${notif ? "Activadas" : "Desactivadas"}</b>`,
+        timer: 3000,
+        showConfirmButton: false
+    });
+}
 
 /* === INIT === */
 cargarSolicitudes();
