@@ -30,6 +30,12 @@ Optimizar los procesos de atención mediante una estructura clara y centralizada
 ➦   Tecnologías
 
 * PostgreSQL / Supabase
+* HTML
+* CSS
+* JS
+* reCATPCHA
+* Docker
+* Express + Node
 
 ➦   Estado del proyecto
 
